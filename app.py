@@ -1,7 +1,7 @@
 """
-Hazem El-Ashry — AEC AI Assistant
-A professional Streamlit chatbot specialized for Architecture, Engineering & Construction.
-Powered by OpenRouter free models with Tree of Thoughts reasoning.
+AEC AI Assistant
+A Streamlit chatbot for Architecture, Engineering & Construction prompts.
+Responses are streamed from OpenRouter using a user-provided API key.
 """
 
 import streamlit as st
@@ -15,7 +15,7 @@ import tiktoken
 # Page Configuration
 # ──────────────────────────────────────────────
 st.set_page_config(
-    page_title="Hazem El-Ashry • AEC AI Assistant",
+    page_title="AEC AI Assistant",
     page_icon="🏗️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -396,22 +396,6 @@ section[data-testid="stSidebar"] .stMarkdown span {
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
 
-/* ── ToT Badge ── */
-.tot-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(99, 102, 241, 0.1));
-    border: 1px solid rgba(6, 182, 212, 0.25);
-    border-radius: 8px;
-    padding: 0.3rem 0.7rem;
-    font-size: 0.72rem;
-    color: #06b6d4;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
 /* ── Link Styling ── */
 .openrouter-link {
     display: inline-flex;
@@ -464,146 +448,49 @@ footer { visibility: hidden; }
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-FREE_MODELS = {
-    "🧠 DeepSeek R1 0528 (Free)": "deepseek/deepseek-r1-0528:free",
-    "⚡ DeepSeek V3 0324 (Free)": "deepseek/deepseek-chat-v3-0324:free",
-    "🌟 Google Gemma 3 27B (Free)": "google/gemma-3-27b-it:free",
-    "🔬 Google Gemma 3 12B (Free)": "google/gemma-3-12b-it:free",
-    "🚀 Qwen3 235B A22B (Free)": "qwen/qwen3-235b-a22b:free",
-    "💎 Qwen3 30B A3B (Free)": "qwen/qwen3-30b-a3b:free",
-    "🏗️ Qwen2.5 Coder 32B (Free)": "qwen/qwen-2.5-coder-32b-instruct:free",
-    "🦙 Llama 4 Maverick (Free)": "meta-llama/llama-4-maverick:free",
-    "🦁 Llama 4 Scout (Free)": "meta-llama/llama-4-scout:free",
-    "🌐 Llama 3.3 70B (Free)": "meta-llama/llama-3.3-70b-instruct:free",
-    "✨ Mistral Small 3.1 24B (Free)": "mistralai/mistral-small-3.1-24b-instruct:free",
-    "🔮 Phi-4 Multimodal (Free)": "microsoft/phi-4-multimodal-instruct:free",
+MODEL_OPTIONS = {
+    "🧠 DeepSeek R1 0528": "deepseek/deepseek-r1-0528:free",
+    "⚡ DeepSeek V3 0324": "deepseek/deepseek-chat-v3-0324:free",
+    "🌟 Google Gemma 3 27B": "google/gemma-3-27b-it:free",
+    "🔬 Google Gemma 3 12B": "google/gemma-3-12b-it:free",
+    "🚀 Qwen3 235B A22B": "qwen/qwen3-235b-a22b:free",
+    "💎 Qwen3 30B A3B": "qwen/qwen3-30b-a3b:free",
+    "🏗️ Qwen2.5 Coder 32B": "qwen/qwen-2.5-coder-32b-instruct:free",
+    "🦙 Llama 4 Maverick": "meta-llama/llama-4-maverick:free",
+    "🦁 Llama 4 Scout": "meta-llama/llama-4-scout:free",
+    "🌐 Llama 3.3 70B": "meta-llama/llama-3.3-70b-instruct:free",
+    "✨ Mistral Small 3.1 24B": "mistralai/mistral-small-3.1-24b-instruct:free",
+    "🔮 Phi-4 Multimodal": "microsoft/phi-4-multimodal-instruct:free",
 }
 
 SPECIALTIES = {
     "🏛️ Revit API Helper": {
         "icon": "🏛️",
-        "description": "Expert in Autodesk Revit API, C#/Python scripting, add-in development, and BIM automation.",
-        "system_prompt": """You are **Hazem El-Ashry**, an elite Revit API specialist and BIM automation expert with 15+ years of experience in AEC technology.
+        "description": "Revit API, C#/Python scripting, add-in development, and BIM automation.",
+        "system_prompt": """You are an AEC-focused assistant helping with Autodesk Revit API and BIM automation questions.
 
-## Your Expertise:
-- Autodesk Revit API (C# and Python/pyRevit)
-- Dynamo visual programming & custom nodes
-- Revit add-in development & deployment
-- BIM automation workflows & batch processing
-- IFC interoperability & data exchange
-- Revit family creation & parametric modeling
-- Worksharing, Revit Server & BIM 360/ACC integration
-
-## Reasoning Approach — Tree of Thoughts:
-When solving complex problems, you MUST use the Tree of Thoughts methodology:
-1. **🌱 Branch Generation**: Identify 2-3 distinct approaches to the problem
-2. **🔍 Evaluation**: Analyze pros/cons of each approach considering performance, maintainability, and Revit API best practices
-3. **🎯 Selection**: Choose the optimal path with clear justification
-4. **🛠️ Implementation**: Provide detailed, production-ready code with error handling
-
-## Response Guidelines:
-- Always provide complete, runnable code with proper error handling
-- Include XML documentation comments for C# or docstrings for Python
-- Reference official Revit API documentation when relevant
-- Suggest performance optimizations (transactions, filtering, element collection)
-- Warn about common pitfalls (regeneration, transaction groups, thread safety)
-- Use proper Revit API patterns (FilteredElementCollector, LINQ, etc.)""",
+Provide clear, practical guidance and label assumptions. When code is requested, use appropriate Revit API transaction, filtering, regeneration, and thread-safety patterns. Refer users to the official Autodesk documentation for version-specific details, and do not claim that untested examples are production-ready. If a request lacks the Revit version, execution context, or required inputs, ask for them or state the limitation.""",
     },
     "🦺 Construction Safety Advisor": {
         "icon": "🦺",
         "description": "OSHA compliance, safety planning, hazard analysis, and risk management for construction sites.",
-        "system_prompt": """You are **Hazem El-Ashry**, a certified Construction Safety expert and OSHA compliance specialist with 15+ years of experience in AEC safety management.
+        "system_prompt": """You are an AEC-focused assistant helping users organize construction-safety questions, hazard reviews, and draft checklists.
 
-## Your Expertise:
-- OSHA regulations (29 CFR 1926) & compliance strategies
-- Construction Safety Plans (CSP) & Site-Specific Safety Plans (SSSP)
-- Job Hazard Analysis (JHA) & Risk Assessment Matrices
-- Fall protection systems & scaffolding safety
-- Excavation, trenching & confined space safety
-- Personal Protective Equipment (PPE) selection & programs
-- Crane, rigging & heavy equipment safety
-- Fire prevention & emergency action plans
-- Safety training programs & toolbox talks
-- Incident investigation & root cause analysis
-
-## Reasoning Approach — Tree of Thoughts:
-When analyzing safety scenarios, you MUST use the Tree of Thoughts methodology:
-1. **🌱 Branch Generation**: Identify multiple hazard mitigation strategies
-2. **🔍 Evaluation**: Assess each strategy for effectiveness, cost, feasibility, and regulatory compliance
-3. **🎯 Selection**: Recommend the optimal safety approach with OSHA references
-4. **📋 Implementation**: Provide detailed action plans, checklists, and documentation templates
-
-## Response Guidelines:
-- Always cite specific OSHA standards and regulations
-- Provide actionable checklists and inspection forms
-- Include severity ratings and probability assessments
-- Reference ANSI, NFPA, and other relevant standards
-- Suggest both engineering controls and administrative controls
-- Emphasize the hierarchy of controls""",
+Use the hierarchy of controls and distinguish general guidance from site-specific requirements. Do not present yourself as a safety professional or claim that a response proves compliance. Regulations and standards vary by jurisdiction and change over time, so direct users to current official sources and a qualified project safety professional before acting on safety-critical advice.""",
     },
     "📐 BIM Standards Consultant": {
         "icon": "📐",
         "description": "BIM execution planning, standards development, LOD specifications, and project coordination.",
-        "system_prompt": """You are **Hazem El-Ashry**, a senior BIM Standards Consultant and digital construction strategist with 15+ years of experience in AEC standardization.
+        "system_prompt": """You are an AEC-focused assistant helping with BIM execution planning, information requirements, coordination workflows, LOD discussions, CDE organization, and interoperability.
 
-## Your Expertise:
-- BIM Execution Plans (BEP/BXP) development
-- ISO 19650 & BS 1192 standards implementation
-- Level of Development (LOD) specifications (LOD 100-500)
-- Model coordination & clash detection workflows
-- Common Data Environment (CDE) setup & management
-- Classification systems (UniFormat, OmniClass, Uniclass)
-- COBie data requirements & asset handover
-- 4D scheduling & 5D cost estimation integration
-- National BIM standards (NBIMS-US, UK BIM Framework)
-- Digital twin strategy & facility management integration
-
-## Reasoning Approach — Tree of Thoughts:
-When developing BIM strategies, you MUST use the Tree of Thoughts methodology:
-1. **🌱 Branch Generation**: Propose multiple standardization approaches
-2. **🔍 Evaluation**: Evaluate each for scalability, compliance, team adoption, and ROI
-3. **🎯 Selection**: Recommend the best-fit standard framework with justification
-4. **📋 Implementation**: Deliver detailed templates, workflows, and governance structures
-
-## Response Guidelines:
-- Reference specific ISO 19650 clauses and appendices
-- Provide BEP templates and responsibility matrices (RACI)
-- Include model audit checklists and quality gates
-- Suggest CDE folder structures and naming conventions
-- Address interoperability concerns (IFC, BCF, etc.)
-- Provide LOD specification tables with element-level detail""",
+Structure recommendations clearly, identify assumptions, and distinguish examples from requirements. Standards and client conventions vary, so ask for the applicable jurisdiction, contract, project information requirements, and document editions. Encourage verification against the current official standard and the project's approved BIM documentation.""",
     },
     "📊 Quantity Surveyor Assistant": {
         "icon": "📊",
         "description": "Cost estimation, BOQ preparation, procurement strategies, and construction economics.",
-        "system_prompt": """You are **Hazem El-Ashry**, a chartered Quantity Surveyor and construction economist with 15+ years of experience in AEC cost management.
+        "system_prompt": """You are an AEC-focused assistant helping users structure quantity-surveying, BOQ, estimation, procurement, and cost-management questions.
 
-## Your Expertise:
-- Bill of Quantities (BOQ) preparation & measurement
-- Cost estimation (preliminary, detailed, parametric)
-- Standard Method of Measurement (SMM7, NRM1/2/3, CESMM4)
-- Procurement & tendering strategies
-- Contract administration (FIDIC, JCT, NEC, AIA)
-- Value engineering & cost optimization
-- Life cycle costing (LCC) & whole life cost analysis
-- Earned Value Management (EVM) & cash flow forecasting
-- Variation & claims management
-- Cost databases & benchmarking (BCIS, RSMeans)
-
-## Reasoning Approach — Tree of Thoughts:
-When solving cost and quantity problems, you MUST use the Tree of Thoughts methodology:
-1. **🌱 Branch Generation**: Develop multiple estimation or procurement approaches
-2. **🔍 Evaluation**: Compare accuracy, speed, risk allocation, and contractual implications
-3. **🎯 Selection**: Recommend the optimal approach with cost-benefit analysis
-4. **📋 Implementation**: Provide detailed BOQs, cost breakdowns, and formatted tables
-
-## Response Guidelines:
-- Always use structured tables for BOQs and cost breakdowns
-- Include measurement rules and references to standards
-- Provide unit rates with material, labor, and equipment breakdowns
-- Apply appropriate contingencies and preliminaries percentages
-- Reference current market rates and price indices
-- Include formulas for escalation, retention, and variations""",
+Show units, formulas, assumptions, inclusions, and exclusions where relevant. Never invent current market rates or imply that example figures are validated project data. Ask the user to supply the measurement standard, location, currency, rate date, quantities, and contract context, and recommend review by a qualified project professional before commercial use.""",
     },
 }
 
@@ -676,7 +563,7 @@ def export_chat_history() -> str:
         return ""
 
     lines = [
-        "# 💬 Chat History — Hazem El-Ashry AEC Assistant",
+        "# 💬 Chat History — AEC AI Assistant",
         f"**Exported**: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         f"**Specialty**: {st.session_state.get('specialty', 'N/A')}",
         f"**Model**: {st.session_state.get('selected_model_name', 'N/A')}",
@@ -687,7 +574,7 @@ def export_chat_history() -> str:
     ]
 
     for i, msg in enumerate(st.session_state.messages):
-        role = "🧑 User" if msg["role"] == "user" else "🤖 Hazem El-Ashry"
+        role = "🧑 User" if msg["role"] == "user" else "🤖 AEC AI Assistant"
         lines.append(f"### {role}")
         lines.append(msg["content"])
         lines.append("")
@@ -706,8 +593,8 @@ def stream_response(api_key: str, model: str, messages: list, temperature: float
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://hazem-el-ashry-aec-assistant.streamlit.app",
-        "X-Title": "Hazem El-Ashry AEC Assistant",
+        "HTTP-Referer": "https://github.com/hazzemmohammed33-cmd/aec-ai-assistant",
+        "X-Title": "AEC AI Assistant",
     }
 
     payload = {
@@ -766,7 +653,7 @@ if "api_key" not in st.session_state:
 if "specialty" not in st.session_state:
     st.session_state.specialty = list(SPECIALTIES.keys())[0]
 if "selected_model_name" not in st.session_state:
-    st.session_state.selected_model_name = list(FREE_MODELS.keys())[0]
+    st.session_state.selected_model_name = list(MODEL_OPTIONS.keys())[0]
 if "temperature" not in st.session_state:
     st.session_state.temperature = 0.7
 
@@ -780,8 +667,8 @@ with st.sidebar:
     st.markdown("""
     <div class="brand-header">
         <div style="font-size:2.5rem; margin-bottom:0.3rem;">🏗️</div>
-        <div class="brand-title">Hazem El-Ashry</div>
-        <div class="brand-subtitle">AEC AI Assistant</div>
+        <div class="brand-title">AEC AI Assistant</div>
+        <div class="brand-subtitle">Streamlit + OpenRouter</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -799,7 +686,7 @@ with st.sidebar:
 
     st.markdown(
         '<a href="https://openrouter.ai/keys" target="_blank" class="openrouter-link">'
-        '🔗 Get your free API key at OpenRouter</a>',
+        '🔗 Create or manage an OpenRouter API key</a>',
         unsafe_allow_html=True,
     )
 
@@ -834,16 +721,16 @@ with st.sidebar:
     st.markdown("### 🤖 Model Selection")
 
     model_name = st.selectbox(
-        "Choose a free model",
-        options=list(FREE_MODELS.keys()),
-        index=list(FREE_MODELS.keys()).index(st.session_state.selected_model_name),
-        help="All models are free-tier from OpenRouter.",
+        "Choose a configured model",
+        options=list(MODEL_OPTIONS.keys()),
+        index=list(MODEL_OPTIONS.keys()).index(st.session_state.selected_model_name),
+        help="Availability and pricing are controlled by OpenRouter and may change.",
     )
     st.session_state.selected_model_name = model_name
 
     st.markdown(
         f'<div class="status-card"><code style="font-size:0.72rem; color:#06b6d4; '
-        f'font-family: JetBrains Mono, monospace;">{FREE_MODELS[model_name]}</code></div>',
+        f'font-family: JetBrains Mono, monospace;">{MODEL_OPTIONS[model_name]}</code></div>',
         unsafe_allow_html=True,
     )
 
@@ -925,7 +812,7 @@ with st.sidebar:
         st.download_button(
             label="📥 Export Chat History",
             data=chat_export,
-            file_name=f"hazem_elashry_chat_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
+            file_name=f"aec_ai_assistant_chat_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
             mime="text/markdown",
             use_container_width=True,
         )
@@ -940,15 +827,9 @@ with st.sidebar:
 
     st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 
-    # ── Tree of Thoughts Badge ──
-    st.markdown(
-        '<div class="tot-badge">🌳 Tree of Thoughts Enabled</div>',
-        unsafe_allow_html=True,
-    )
-
     st.markdown(
         '<div style="margin-top:0.8rem; font-size:0.72rem; color:var(--text-muted);">'
-        'Built with ❤️ by Hazem El-Ashry<br>'
+        'Built by Hazem Mohamed<br>'
         'Powered by OpenRouter • Streamlit</div>',
         unsafe_allow_html=True,
     )
@@ -964,15 +845,15 @@ if not st.session_state.messages:
     st.markdown(f"""
     <div class="welcome-card">
         <div class="welcome-icon">{spec["icon"]}</div>
-        <div class="welcome-title">Welcome to Hazem El-Ashry</div>
+        <div class="welcome-title">Welcome to AEC AI Assistant</div>
         <div class="welcome-desc">
             Your AI-powered <strong>{st.session_state.specialty.split(' ', 1)[1]}</strong> assistant,
-            enhanced with Tree of Thoughts reasoning for deeper, more structured analysis.
+            configured with an AEC-focused prompt profile.
         </div>
         <div class="feature-grid">
-            <div class="feature-pill">🌳 Tree of Thoughts</div>
+            <div class="feature-pill">🎯 Prompt Profiles</div>
             <div class="feature-pill">⚡ Streaming Responses</div>
-            <div class="feature-pill">🎯 AEC Specialized</div>
+            <div class="feature-pill">🏗️ AEC Focused</div>
             <div class="feature-pill">📊 Token Tracking</div>
         </div>
     </div>
@@ -1010,7 +891,7 @@ for message in st.session_state.messages:
 # Chat Input & Response
 # ──────────────────────────────────────────────
 
-if prompt := st.chat_input("Ask Hazem El-Ashry anything about AEC..."):
+if prompt := st.chat_input("Ask a question about AEC..."):
     if not st.session_state.api_key:
         st.error("⚠️ Please enter your OpenRouter API key in the sidebar to start chatting.")
         st.stop()
@@ -1039,7 +920,7 @@ if prompt := st.chat_input("Ask Hazem El-Ashry anything about AEC..."):
         token_placeholder = st.empty()
 
         full_response = ""
-        model_id = FREE_MODELS[st.session_state.selected_model_name]
+        model_id = MODEL_OPTIONS[st.session_state.selected_model_name]
 
         for chunk in stream_response(
             api_key=st.session_state.api_key,

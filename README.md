@@ -1,176 +1,95 @@
-# 🏗️ Hazem El-Ashry — AEC AI Assistant
+# AEC AI Assistant
 
-<div align="center">
+A Streamlit chat interface for Architecture, Engineering, and Construction (AEC) questions. It sends streamed chat-completion requests to OpenRouter using an API key supplied by the user.
 
-**A professional AI chatbot specialized for Architecture, Engineering & Construction (AEC)**
+## Features
 
-Built with Streamlit • Powered by OpenRouter (Free Models) • Tree of Thoughts Reasoning
+- Four selectable prompt profiles: Revit API Helper, Construction Safety Advisor, BIM Standards Consultant, and Quantity Surveyor Assistant.
+- A source-defined menu of 12 OpenRouter model IDs.
+- Streamed responses in the chat interface.
+- Temperature control and session-local conversation history.
+- Preset prompts for each AEC profile.
+- Clear-chat and Markdown export controls.
+- Approximate input and output token counts using `tiktoken`, with a character-count fallback.
+- Password-masked OpenRouter API-key input.
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![OpenRouter](https://img.shields.io/badge/OpenRouter-6366F1?style=for-the-badge&logo=openai&logoColor=white)](https://openrouter.ai)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+## How it works
 
-</div>
-
----
-
-## ✨ Features
-
-### Core Features
-- 🎯 **4 AEC Specialties** — Revit API Helper, Construction Safety Advisor, BIM Standards Consultant, Quantity Surveyor Assistant
-- 🤖 **12+ Free AI Models** — DeepSeek R1, Gemma 3, Qwen 3, Llama 4, Mistral, Phi-4 and more via OpenRouter
-- 🌳 **Tree of Thoughts Reasoning** — Multi-path analysis for deeper, structured problem-solving
-- ⚡ **Streaming Responses** — Real-time line-by-line response streaming
-- 💬 **Chat History** — Full conversation memory within session
-- 🌡️ **Temperature Control** — Adjust creativity from Precise (0.0) to Experimental (2.0)
-- 🗑️ **Clear Chat** — One-click conversation reset
-
-### Bonus Features
-- 📥 **Export Chat History** — Download conversations as formatted Markdown files
-- 💡 **Preset Prompts** — Quick-start templates for each specialty
-- 📊 **Token Counter** — Real-time token tracking (input, output, per-message)
-- 🔑 **Secure API Key Input** — Password-masked input with direct link to get a free key
-
-### Design
-- 🎨 **Premium Dark Theme** — Glassmorphism, gradients, and micro-animations
-- 📱 **Responsive Layout** — Works on desktop and mobile
-- ✏️ **Custom Typography** — Inter + JetBrains Mono fonts
-- 🌈 **Animated Elements** — Shimmer effects, floating icons, smooth transitions
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.9+
-- An OpenRouter API key (free) — [Get one here](https://openrouter.ai/keys)
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/your-username/hazem-el-ashry-aec-assistant.git
-cd hazem-el-ashry-aec-assistant
+```text
+User-provided OpenRouter key
+            │
+            v
+Streamlit UI -> selected specialty prompt + session messages
+            │
+            v
+OpenRouter chat-completions API (streaming)
+            │
+            v
+Rendered response + approximate local token count
 ```
 
-2. **Create a virtual environment** (recommended)
+The specialty profiles are prompt templates, not separate reasoning engines or connected professional knowledge bases. Responses can be incomplete or incorrect and should be checked against current project requirements, official documentation, regulations, standards, and qualified professional advice.
+
+## Setup
+
+Prerequisites:
+
+- A Python environment compatible with the versions in `requirements.txt`.
+- An [OpenRouter API key](https://openrouter.ai/keys) supplied by the user.
+
+Clone and install:
+
 ```bash
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS/Linux
-source venv/bin/activate
+git clone https://github.com/hazzemmohammed33-cmd/aec-ai-assistant.git
+cd aec-ai-assistant
+python -m venv .venv
 ```
 
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+Activate the environment for your shell, then run:
 
-4. **Set up environment variables**
 ```bash
-cp .env.example .env
-# Edit .env and add your OpenRouter API key
-```
-
-5. **Run the application**
-```bash
+python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-6. **Open in browser** — Navigate to `http://localhost:8501`
+Paste your OpenRouter API key into the password-masked field in the sidebar. The current application reads the key from that field; `.env.example` documents the variable name but `app.py` does not automatically load a `.env` file.
 
----
+## Model availability and pricing
 
-## 🔑 Getting Your API Key
+The model IDs in `app.py` are configuration choices, not availability or pricing guarantees. OpenRouter controls model access, routing, rate limits, and pricing, and those details can change. Review the current model page and account settings on OpenRouter before use. The user is responsible for provider terms and any charges.
 
-1. Visit [OpenRouter Keys Page](https://openrouter.ai/keys)
-2. Sign up or log in (free)
-3. Click **"Create Key"**
-4. Copy the key (starts with `sk-or-v1-...`)
-5. Paste it in the sidebar of the app
+## Project structure
 
-> 💡 **Tip:** All models in this app are free-tier, so no payment is needed!
-
----
-
-## 🏛️ Specialties
-
-| Specialty | Description |
-|-----------|-------------|
-| 🏛️ **Revit API Helper** | Revit API, C#/Python scripting, Dynamo, BIM automation |
-| 🦺 **Construction Safety Advisor** | OSHA compliance, JHA, safety plans, risk management |
-| 📐 **BIM Standards Consultant** | ISO 19650, BEP, LOD specs, CDE setup, coordination |
-| 📊 **Quantity Surveyor Assistant** | BOQ, cost estimation, procurement, contract admin |
-
----
-
-## 🤖 Available Free Models
-
-| Model | Provider | ID |
-|-------|----------|----|
-| DeepSeek R1 0528 | DeepSeek | `deepseek/deepseek-r1-0528:free` |
-| DeepSeek V3 0324 | DeepSeek | `deepseek/deepseek-chat-v3-0324:free` |
-| Gemma 3 27B | Google | `google/gemma-3-27b-it:free` |
-| Gemma 3 12B | Google | `google/gemma-3-12b-it:free` |
-| Qwen3 235B A22B | Qwen | `qwen/qwen3-235b-a22b:free` |
-| Qwen3 30B A3B | Qwen | `qwen/qwen3-30b-a3b:free` |
-| Qwen2.5 Coder 32B | Qwen | `qwen/qwen-2.5-coder-32b-instruct:free` |
-| Llama 4 Maverick | Meta | `meta-llama/llama-4-maverick:free` |
-| Llama 4 Scout | Meta | `meta-llama/llama-4-scout:free` |
-| Llama 3.3 70B | Meta | `meta-llama/llama-3.3-70b-instruct:free` |
-| Mistral Small 3.1 24B | Mistral | `mistralai/mistral-small-3.1-24b-instruct:free` |
-| Phi-4 Multimodal | Microsoft | `microsoft/phi-4-multimodal-instruct:free` |
-
----
-
-## 🌳 Tree of Thoughts (ToT)
-
-The assistant uses a **Tree of Thoughts** reasoning approach:
-
-1. **🌱 Branch Generation** — Identifies 2-3 distinct approaches
-2. **🔍 Evaluation** — Analyzes pros/cons of each approach
-3. **🎯 Selection** — Chooses the optimal path with justification
-4. **🛠️ Implementation** — Provides detailed, actionable output
-
-This ensures more thorough, well-reasoned responses compared to standard single-path reasoning.
-
----
-
-## 📁 Project Structure
-
-```
-hazem-el-ashry-aec-assistant/
-├── app.py              # Main Streamlit application
-├── requirements.txt    # Python dependencies
-├── .env.example        # Environment variables template
-├── README.md           # This file
-└── .gitignore          # Git ignore rules
+```text
+aec-ai-assistant/
+├── app.py                  Streamlit application and prompt configuration
+├── requirements.txt        Python dependencies
+├── .env.example            API-key variable example
+├── .streamlit/config.toml  Streamlit theme and server settings
+├── .gitignore              Local environment and secret exclusions
+└── README.md               Project documentation
 ```
 
----
+## Security and limitations
 
-## 🛠️ Tech Stack
+- Never commit an OpenRouter API key. `.env` and `.streamlit/secrets.toml` are ignored by Git.
+- The key is used by the Streamlit process to authenticate requests to OpenRouter.
+- Conversation history is stored only in the current Streamlit session and is cleared when the session resets.
+- Exported token counts are local approximations, not provider billing or usage records.
+- The repository currently has no automated test suite or CI workflow.
+- Model output is not a substitute for project-specific validation or professional review.
 
-- **Frontend**: [Streamlit](https://streamlit.io) with custom CSS
-- **AI API**: [OpenRouter](https://openrouter.ai) (OpenAI-compatible)
-- **Token Counting**: [tiktoken](https://github.com/openai/tiktoken) (cl100k_base)
-- **Fonts**: Google Fonts (Inter, JetBrains Mono)
+## Technology
 
----
+- Python
+- Streamlit
+- OpenRouter chat-completions API
+- Requests
+- tiktoken
 
-## 📄 License
+## Author
 
-This project is licensed under the MIT License.
+Hazem Mohamed
 
----
-
-<div align="center">
-
-**Built with ❤️ by Hazem El-Ashry**
-
-*Empowering AEC professionals with AI*
-
-</div>
+- [GitHub](https://github.com/hazzemmohammed33-cmd)
+- [LinkedIn](https://www.linkedin.com/in/hazem-mohamed-aec/)
