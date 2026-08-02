@@ -87,6 +87,15 @@ aec-ai-assistant/
 - Requests
 - tiktoken
 
+## Roadmap
+
+Planned work:
+
+- Add automated coverage for prompt selection, session-state migration, API payload construction, streaming responses, and error handling.
+- Add continuous integration for syntax, lint, and test checks.
+- Review configured model IDs periodically and improve handling for provider-side availability changes without promising access or pricing.
+- Document optional deployment and secret-management workflows after they are implemented and verified.
+
 ## Author
 
 Hazem Mohamed

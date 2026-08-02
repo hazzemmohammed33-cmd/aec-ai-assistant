@@ -534,6 +534,14 @@ PRESET_PROMPTS = {
 # Helper Functions
 # ──────────────────────────────────────────────
 
+def _normalize_model_name(selected_model_name: str) -> str:
+    """Map legacy model labels to current options and reset unknown values."""
+    normalized_name = selected_model_name.removesuffix(" (Free)")
+    if normalized_name in MODEL_OPTIONS:
+        return normalized_name
+    return next(iter(MODEL_OPTIONS))
+
+
 def count_tokens(text: str) -> int:
     """Approximate token count using tiktoken cl100k_base encoding."""
     try:
@@ -654,6 +662,9 @@ if "specialty" not in st.session_state:
     st.session_state.specialty = list(SPECIALTIES.keys())[0]
 if "selected_model_name" not in st.session_state:
     st.session_state.selected_model_name = list(MODEL_OPTIONS.keys())[0]
+st.session_state.selected_model_name = _normalize_model_name(
+    st.session_state.selected_model_name
+)
 if "temperature" not in st.session_state:
     st.session_state.temperature = 0.7
 
